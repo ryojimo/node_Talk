@@ -32,7 +32,7 @@ var server = http.createServer();
 server.on( 'request', doRequest );
 
 // 待ち受けスタート
-server.listen( process.env.VMC_APP_PORT || 3000 );
+server.listen( process.env.VMC_APP_PORT || 6000 );
 console.log( "[main.js] Server running!" );
 
 // request イベント処理

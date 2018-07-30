@@ -1,0 +1,161 @@
+<!--
+ * @fileoverview アプリケーション UI
+ * @author       Uz
+ * @version      0.0.1
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <title>Bridge Terminal</title>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./style.css" type="text/css" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="/jQueryRotate.js"></script>
+  <script type="text/javascript" src="/app.js"></script>
+
+
+  <style>
+  body {
+      position: relative; 
+  }
+  #section_music  {padding-top:30px;/*height:200px*/;color: #fff; background-color: #FF8A65;}
+  #section_mic    {padding-top:30px;/*height:200px*/;color: #fff; background-color: #DCE775;}
+  #section_talk   {padding-top:30px;/*height:200px*/;color: #fff; background-color: #81C784;}
+  </style>
+</head>
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">BT Sensors</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#section_music" >Music</a></li>
+        <li><a href="#section_mic"   >Mic</a></li>
+        <li><a href="#section_talk"   >Talk</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-search"></span></a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!-- Music -->
+<div id="section_music" class="container-fluid">
+<section>
+  <h1>Music</h1>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'GET PID' );">GET PID</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'PLAY'    );">PLAY</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'STOP'    );">STOP</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'PAUSE'   );">PAUSE</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendMusicCmd( 'RESUME'  );">RESUME</button>
+</section>
+<br/>
+</div>
+
+
+<!-- Mic -->
+<div id="section_mic" class="container-fluid">
+<section>
+  <h1>Mic</h1>
+  <textarea class="form-control" name="cmnt" rows="2" id="val_cmnt" placeholder="" style="color: #000;"></textarea>
+  <br/>
+  <button type="button" class="btn btn-default btn-lg" onclick="submitMicStart();">マイク ON</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="submitMicStop();" >マイク OFF</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendCmnt();"      >投稿</button>
+  <button type="button" class="btn btn-default btn-lg" onclick="clearCmnt();"     >クリア</button>
+</section>
+<br/>
+</div>
+
+
+<!-- Talk -->
+<div id="section_talk" class="container-fluid">
+<section>
+  <h1>Talk</h1>
+  <select style="color: #000;" name="話し手" oninput="sendTalk();" id="val_talker">
+    <option value="nozomi">nozomi</option>
+    <option value="maki">maki</option>
+    <option value="kaho">kaho</option>
+    <option value="akari">akari</option>
+    <option value="nanako">nanako</option>
+    <option value="seiji">seiji</option>
+    <option value="osamu">osamu</option>
+    <option value="hiroshi">hiroshi</option>
+    <option value="anzu">anzu</option>
+  </select>
+  <br/>
+  <textarea class="form-control" name="cmnt" rows="2" id="val_talk" placeholder="" style="color: #000;"></textarea>
+  <br/>
+  <button type="button" class="btn btn-default btn-lg" onclick="sendTalk();">送信</button>
+</section>
+<br/>
+</div>
+
+
+<!-- Footer -->
+<footer class="text-center">
+  <a class="up-arrow" href="#" data-toggle="tooltip" title="TO TOP">
+    <span class="glyphicon glyphicon-chevron-up"></span>
+  </a><br><br>
+  <p>BT Sensors Made By <a href="#" data-toggle="tooltip" title="Visit uzeeze">www.uzeeze.com</a></p> 
+</footer>
+
+<script>
+$(document).ready(function(){
+  // Initialize Tooltip
+  $('[data-toggle="tooltip"]').tooltip(); 
+
+  // Add smooth scrolling to all links in navbar + footer link
+  $(".navbar a, footer a[href='#']").on('click', function(event) {
+
+    // Make sure this.hash has a value before overriding default behavior
+    if (this.hash !== "") {
+
+      // Prevent default anchor click behavior
+      event.preventDefault();
+
+      // Store hash
+      var hash = this.hash;
+
+      // Using jQuery's animate() method to add smooth page scroll
+      // The optional number (900) specifies the number of milliseconds it takes to scroll to the specified area
+      $('html, body').animate({
+        scrollTop: $(hash).offset().top
+      }, 900, function(){
+   
+        // Add hash (#) to URL when done scrolling (default click behavior)
+        window.location.hash = hash;
+      });
+    } // End if
+  });
+})
+</script>
+</body>
+</html>

@@ -12,18 +12,16 @@ var colors   = require( 'colors' );
 require( 'date-utils' );
 var schedule = require( 'node-schedule' );
 
-const DataCmnt   = require( './js/DataCmnt' );
-const DataPerson = require( './js/DataPerson' );
-const DataSensors = require( './js/DataSensors' );
-const Docomo     = require( './js/Docomo' );
-const PlayMusic  = require( './js/PlayMusic' );
+const DataCmnts   = require( './js/DataCmnts' );
+const Docomo      = require( './js/Docomo' );
+const PlayMusic   = require( './js/PlayMusic' );
 
 
 // Ver. 表示
 var now = new Date();
 console.log( "[main.js] " + now.toFormat("YYYY年MM月DD日 HH24時MI分SS秒").rainbow );
 console.log( "[main.js] " + "ver.01 : app.js".rainbow );
-console.log( "[main.js] " + "access to http://localhost:3000" );
+console.log( "[main.js] " + "access to http://localhost:4000" );
 
 // サーバー・オブジェクトを生成
 var server = http.createServer();
@@ -32,7 +30,7 @@ var server = http.createServer();
 server.on( 'request', doRequest );
 
 // 待ち受けスタート
-server.listen( process.env.VMC_APP_PORT || 6000 );
+server.listen( process.env.VMC_APP_PORT || 4000 );
 console.log( "[main.js] Server running!" );
 
 // request イベント処理
@@ -91,17 +89,6 @@ function doRequest(
       }
     );
   break;
-  case '/jQueryRotate.js':
-    fs.readFile( './app/js_lib/jQueryRotate.js', 'UTF-8',
-      function( err, data ){
-        res.writeHead( 200, {'Content-Type': 'application/javascript',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data );
-        res.end();
-      }
-    );
-  break;
   case '/tmp/picture.jpg':
     fs.readFile( './tmp/picture.jpg', 'binary',
       function( err, data ){
@@ -125,8 +112,7 @@ var io = socketio.listen( server );
 //-----------------------------------------------------------------------------
 var timerFlg;
 
-var cmnt    = new DataCmnt();
-
+var cmnts   = new DataCmnts();
 var docomo  = new Docomo();
 var music   = new PlayMusic();
 var music_pid = 0;
@@ -208,15 +194,14 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] " + 'C_to_S_CMNT' );
     console.log( "[main.js] data = " + data );
 
-    var data = { time: hhmmss(), cmnt: data }
-    var file = '/media/pi/USBDATA/' + yyyymmdd() + '_cmnt.txt';
+    var data = { date:yyyymmdd(), time: hhmmss(), cmnt: data }
+
+    console.log( "[main.js] data.date = " + data.date );
     console.log( "[main.js] data.time = " + data.time );
     console.log( "[main.js] data.cmnt = " + data.cmnt );
     console.log( "[main.js] file = " + file );
 
-    cmnt.Update( data );
-    cmnt.AppendFile( file );
-    var ret = cmnt.ReadFile( file );
+    cmnts.CreateMDDoc( data );
   });
 
 

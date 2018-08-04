@@ -78,28 +78,6 @@ function doRequest(
       }
     );
   break;
-  case '/bg.gif':
-    fs.readFile( './app/bg.gif', 'binary',
-      function( err, data ){
-        res.writeHead( 200, {'Content-Type': 'image/gif',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data, 'binary' );
-        res.end();
-      }
-    );
-  break;
-  case '/tmp/picture.jpg':
-    fs.readFile( './tmp/picture.jpg', 'binary',
-      function( err, data ){
-        res.writeHead( 200, {'Content-Type': 'image/jpg',
-                             'Access-Control-Allow-Origin': '*'
-                      } );
-        res.write( data, 'binary' );
-        res.end();
-      }
-    );
-  break;
   }
 }
 
@@ -156,52 +134,23 @@ io.sockets.on( 'connection', function( socket ){
   });
 
 
-  socket.on( 'C_to_S_GET', function( data ){
-    console.log( "[main.js] " + 'C_to_S_GET' );
-    console.log( "[main.js] data = " + data );
-
-    var exec = require( 'child_process' ).exec;
-    var ret  = exec( data,
-      function( err, stdout, stderr ){
-        console.log( "[main.js] stdout = " + stdout );
-        console.log( "[main.js] stderr = " + stderr );
-        if( err ){
-          console.log( "[main.js] " + err );
-        }
-
-        io.sockets.emit( 'S_to_C_DATA', {value:stdout} );
-    });
-  });
-
-
-  socket.on( 'C_to_S_SET', function( data ){
-    console.log( "[main.js] " + 'C_to_S_SET' );
-    console.log( "[main.js] data = " + data );
-
-    var exec = require( 'child_process' ).exec;
-    var ret  = exec( data,
-      function( err, stdout, stderr ){
-        console.log( "[main.js] stdout = " + stdout );
-        console.log( "[main.js] stderr = " + stderr );
-        if( err ){
-          console.log( "[main.js] " + err );
-        }
-      });
-  });
-
-
   socket.on( 'C_to_S_CMNT', function( data ){
     console.log( "[main.js] " + 'C_to_S_CMNT' );
     console.log( "[main.js] data = " + data );
 
-    var data = { date:yyyymmdd(), time: hhmmss(), cmnt: data }
+    var data = { date:yyyymmdd(), time: hhmmss(), cmnt: data };
 
     console.log( "[main.js] data.date = " + data.date );
     console.log( "[main.js] data.time = " + data.time );
     console.log( "[main.js] data.cmnt = " + data.cmnt );
-    console.log( "[main.js] file = " + file );
 
     cmnts.CreateMDDoc( data );
+
+/*
+    cmnts.Update( data );
+    cmnts.AppendFile( file );
+    var ret = cmnts.ReadFile( file );
+*/
   });
 
 

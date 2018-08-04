@@ -40,8 +40,20 @@ server.on( 'S_to_C_DATA', function( data ){
   console.log( "[app.js] " + 'S_to_C_DATA' );
   console.log( "[app.js] data = " + data.value );
 //  window.alert( 'コマンドを送信しました。\n\r' + data.value );
+});
 
-  document.getElementById('val_sensor').innerHTML = data.value; // 数値を表示
+
+server.on( 'S_to_C_DATA_LAST30S', function( data ){
+  console.log( "[app.js] " + 'S_to_C_DATA_LAST30S' );
+  console.log( "[app.js] data.diff  = " + data.diff );
+  console.log( "[app.js] data.value = " + JSON.stringify(data.value) );
+});
+
+
+server.on( 'S_to_C_TALK_CB', function(){
+  console.log( "[app.js] " + 'S_to_C_TALK_CB' );
+//    window.alert( 'play  ****.wav が完了しました。\n\r' );
+  recognition.start();
 });
 
 
@@ -50,38 +62,6 @@ server.on( 'S_to_C_DATA', function( data ){
 
 
 //-----------------------------------------------------------------------------
-/**
- * Get コマンドを送る。
- * @param {string} cmd - コマンドの文字列
- * @return {void}
- * @example
- * sendGetCmd( 'sudo ./board.out temp1' );
-*/
-function sendGetCmd( cmd ){
-  console.log( "[app.js] sendGetCmd()" );
-  console.log( "[app.js] cmd = " + cmd );
-
-  console.log( "[app.js] server.emit(" + 'C_to_S_GET' + ")" );
-  server.emit( 'C_to_S_GET', cmd );
-}
-
-
-/**
- * Set コマンドを送る。
- * @param {string} cmd - コマンドの文字列
- * @return {void}
- * @example
- * sendSetCmd( 'sudo ./board.out relay on' );
-*/
-function sendSetCmd( cmd ){
-  console.log( "[app.js] sendSetCmd()" );
-  console.log( "[app.js] cmd = " + cmd );
-
-  console.log( "[app.js] server.emit(" + 'C_to_S_SET' + ")" );
-  server.emit( 'C_to_S_SET', cmd );
-}
-
-
 /**
  * コメントのデータを送信する
  * @param {void}

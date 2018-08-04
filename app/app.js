@@ -43,10 +43,16 @@ server.on( 'S_to_C_DATA', function( data ){
 });
 
 
-server.on( 'S_to_C_DATA_LAST30S', function( data ){
-  console.log( "[app.js] " + 'S_to_C_DATA_LAST30S' );
-  console.log( "[app.js] data.diff  = " + data.diff );
-  console.log( "[app.js] data.value = " + JSON.stringify(data.value) );
+server.on( 'S_to_C_CMNT_ONE_DAY', function( data ){
+  console.log( "[app.js] " + 'S_to_C_CMNT_ONE_DAY' );
+  console.log( "[app.js] data = " + JSON.stringify(data.value) );
+
+  if( data.value == false ){
+    str = "コメントがありません。";
+    document.getElementById( "val_data_daily" ).innerHTML = str;
+  } else{
+    showUpdatedCmnt( data.value, "val_data_daily", "up" );
+  }
 });
 
 
@@ -55,6 +61,44 @@ server.on( 'S_to_C_TALK_CB', function(){
 //    window.alert( 'play  ****.wav が完了しました。\n\r' );
   recognition.start();
 });
+
+
+//-------------------------------------
+/**
+ * 引数のコメントを指定した id に表示する
+ * @param {string} data - コメントの文字列
+ * @param {string} id - コメントを表示する先の id
+ * @param {string} dir - "up" or "down"
+ * @return {void}
+ * @example
+ * showUpdatedCmnt( data, "val_data_today", "down" );
+*/
+function showUpdatedCmnt( data, id, dir ){
+  console.log( "[app.js] showUpdatedCmnt()" );
+  console.log( "[app.js] data = " + JSON.stringify(data) );
+  console.log( "[app.js] id   = " + id );
+  console.log( "[app.js] dir  = " + dir );
+
+  console.log( "[app.js] data.length = " + data.length );
+
+  // 表示する文字列を生成
+  var str = "";
+
+  if( dir === "up" ){
+    for( i=0; i<data.length; i++ ){
+      str += data[i].time + " : " + data[i].cmnt + "\n";
+    }
+  } else if( dir === "down" ){
+    for( i=data.length - 1; i>=0; i-- ){
+      str += data[i].time + " : " + data[i].cmnt + "\n";
+    }
+  } else{
+    str = "";
+  }
+
+  // 文字列を表示
+  document.getElementById( id ).innerHTML = str;
+}
 
 
 //-----------------------------------------------------------------------------
@@ -100,6 +144,28 @@ function clearCmnt(){
   console.log( "[app.js] clearCmnt()" );
   var cmnt = document.getElementById( 'val_cmnt' );
   cmnt.value = '';
+}
+
+
+/**
+ * 指定した 1 日の、全コメントを取得するためのコマンドを送る。
+ * @param {void}
+ * @return {void}
+ * @example
+ * sendGetCmntOneDay();
+*/
+function sendGetCmntOneDay(){
+  console.log( "[app.js] sendGetCmntOneDay()" );
+
+  var date = document.getElementById( "val_date" ).value;
+  console.log( "[app.js] date =" + date );
+
+  if( date < "2018-08-01" ){
+    alert( "2018/08/01 以降を指定してください。" );
+  }
+
+  console.log( "[app.js] server.emit(" + 'C_to_S_GET_CMNT_ONE_DAY' + ")" );
+  server.emit( 'C_to_S_GET_CMNT_ONE_DAY', date );
 }
 
 

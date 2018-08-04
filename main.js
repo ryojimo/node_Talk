@@ -134,6 +134,16 @@ io.sockets.on( 'connection', function( socket ){
   });
 
 
+  socket.on( 'C_to_S_GET_CMNT_ONE_DAY', function( date ){
+    console.log( "[main.js] " + 'C_to_S_GET_CMNT_ONE_DAY' );
+
+    cmnts.GetMDDocDataOneDay( date, function( err, data ){
+//      console.log( data );
+      io.sockets.emit( 'S_to_C_CMNT_ONE_DAY', {ret:err, value:data} );
+    });
+  });
+
+
   socket.on( 'C_to_S_CMNT', function( data ){
     console.log( "[main.js] " + 'C_to_S_CMNT' );
     console.log( "[main.js] data = " + data );

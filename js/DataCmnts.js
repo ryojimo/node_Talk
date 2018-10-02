@@ -34,14 +34,14 @@ var DataCmnts = function(){
 
 
 /**
- * Mongodb にデータベース、コレクション、ドキュメントを作成する。
+ * ドキュメントを作成する。
  * @param {Object.<string, string>} data - JSON 文字列
  * @return {void}
  * @example
- * CreateMDDoc( "{...}" );
+ * createDoc( {} );
 */
-DataCmnts.prototype.CreateMDDoc = function( data ){
-  console.log( "[DataCmnts.js] CreateMDDoc()" );
+DataCmnts.prototype.createDoc = function( data ){
+  console.log( "[DataCmnts.js] createDoc()" );
   console.log( "[DataCmnts.js] data = " + data );
 
 //  var jsonObj = (new Function( 'return ' + data ))();
@@ -49,22 +49,22 @@ DataCmnts.prototype.CreateMDDoc = function( data ){
   var doc = { date: data.date, time: data.time, area: data.area, gid: data.gid, cmnt: data.cmnt };
 
   MongoClient.connect( this.mongo_url, function(err, db) {
-    if( err ){
-      throw err;
-    }
+    if( err ) throw err;
 
-    // データベースを取得する
-    var dbo = db.db( 'comments' );
-
-    // コレクションを取得する
-    var clo = dbo.collection( 'feedback' );
+    var dbo = db.db( 'comments' );          // データベースを取得する
+    var clo = dbo.collection( 'feedback' ); // コレクションを取得する
 
     // doc をデータベースに insert する
     clo.insertOne( doc, function(err, res) {
-      if( err ){
-        throw err;
+      try{
+        if( err ) throw err;
+
+        db.close();
       }
-      db.close();
+      catch( e ){
+        console.log( "[DataSensors.js] e = " + e + " : " + e.message );
+        db.close();
+      }
     });
   });
 }
@@ -76,38 +76,34 @@ DataCmnts.prototype.CreateMDDoc = function( data ){
  * @param {function(boolean, Object.<string, number>)} callback - データを取得するためのコールバック関数
  * @return {void}
  * @example
- * GetMDDocDataOneDay( '2018-07-25', ... );
+ * getOneDay( '2018-07-25', function( err, doc ){} );
 */
-DataCmnts.prototype.GetMDDocDataOneDay = function( date, callback ){
-  console.log( "[DataCmnts.js] GetMDDocDataOneDay()" );
+DataCmnts.prototype.getOneDay = function( date, callback ){
+  console.log( "[DataCmnts.js] getOneDay()" );
   console.log( "[DataCmnts.js] date   = " + date );
 
   MongoClient.connect( this.mongo_url, function(err, db) {
     if( err ) throw err;
 
-    // データベースを取得する
-    var dbo = db.db( 'comments' );
-
-    // コレクションを取得する
-    var clo = dbo.collection( 'feedback' );
+    var dbo = db.db( 'comments' );          // データベースを取得する
+    var clo = dbo.collection( 'feedback' ); // コレクションを取得する
 
     var query = { date: date };
 
-    // コレクションに含まれるすべてのドキュメントを取得する
-    clo.find( query ).toArray( function(err, documents){
+    // {date: date} のドキュメントを取得する
+    clo.find( query ).toArray( function(err, docs){
       try{
-        if( err ){
-          throw err;
-        }
+        if( err ) throw err;
 
         db.close();
-
-//      console.log( documents );
-        callback( true, documents );
+        console.log( "[DataCmnts.js] docs.length = " + docs.length );
+//        console.log( "[DataBooks.js] docs        = " + JSON.stringify(docs) );
+        callback( true, docs );
       }
       catch( e ){
-        console.log( "[DataCmnts.js] e = " + e );
-        callback( false, documents );
+        console.log( "[DataBooks.js] e = " + e + " : " + e.message );
+        db.close();
+        callback( false, docs );
       }
     });
   });

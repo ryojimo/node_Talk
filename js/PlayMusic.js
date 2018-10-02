@@ -33,10 +33,10 @@ var PlayMusic = function(){
  * @param {string} filename - 再生するファイル
  * @return {void}
  * @example
- * Play( "Pink\ -\ Blow\ Me.mp3" );
+ * play( "Pink\ -\ Blow\ Me.mp3" );
 */
-PlayMusic.prototype.Play = function( filename ){
-  console.log( "[PlayMusic.js] PLAY()" );
+PlayMusic.prototype.play = function( filename ){
+  console.log( "[PlayMusic.js] play()" );
   console.log( "[PlayMusic.js] filename = " + filename );
 
   if( this.status == 'STOP' ){
@@ -74,10 +74,10 @@ PlayMusic.prototype.Play = function( filename ){
  * @param {string} status - 'STOP' or 'PAUSE' or 'RESTART'
  * @return {void}
  * @example
- * Stop();
+ * changeStatus( 'PLAY' );
 */
-PlayMusic.prototype.ChangeStatus = function( status ){
-  console.log( "[PlayMusic.js] ChangeStatus()" );
+PlayMusic.prototype.changeStatus = function( status ){
+  console.log( "[PlayMusic.js] changeStatus()" );
   console.log( "[PlayMusic.js] status = " + status );
   this.status = status;
 
@@ -99,10 +99,10 @@ PlayMusic.prototype.ChangeStatus = function( status ){
  * @param {function(string)} callback - GID を渡すための callback 関数
  * @return {void}
  * @example
- * Stop();
+ * getPID( function( id ){} );
 */
-PlayMusic.prototype.GetPID = function( callback ){
-  console.log( "[PlayMusic.js] GetPID()" );
+PlayMusic.prototype.getPID = function( callback ){
+  console.log( "[PlayMusic.js] getPID()" );
 
   var cmd  = 'ps  aux  |  grep  play\\ -v';
 

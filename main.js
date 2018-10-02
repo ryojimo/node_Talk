@@ -137,7 +137,7 @@ io.sockets.on( 'connection', function( socket ){
   socket.on( 'C_to_S_GET_CMNT_ONE_DAY', function( date ){
     console.log( "[main.js] " + 'C_to_S_GET_CMNT_ONE_DAY' );
 
-    cmnts.GetMDDocDataOneDay( date, function( err, data ){
+    cmnts.getOneDay( date, function( err, data ){
 //      console.log( data );
       io.sockets.emit( 'S_to_C_CMNT_ONE_DAY', {ret:err, value:data} );
     });
@@ -154,13 +154,7 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.time = " + data.time );
     console.log( "[main.js] data.cmnt = " + data.cmnt );
 
-    cmnts.CreateMDDoc( data );
-
-/*
-    cmnts.Update( data );
-    cmnts.AppendFile( file );
-    var ret = cmnts.ReadFile( file );
-*/
+    cmnts.createDoc( data );
   });
 
 
@@ -168,14 +162,14 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] " + 'C_to_S_MUSIC' );
 
     if( data == 'GET PID' ){
-      music.GetPID( function( id ){
+      music.getPID( function( id ){
         music_pid = id;
         console.log( "[main.js] " + "pid=" + music_pid );
       });
     } else if( data == 'PLAY' ){
-      music.Play( 'Music.mp3' );
+      music.play( 'Music.mp3' );
     } else {
-      music.ChangeStatus( data );
+      music.changeStatus( data );
     }
   });
 
@@ -184,8 +178,8 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] " + 'C_to_S_TALK' );
     console.log( "[main.js] cmnt = " + cmnt );
 
-    docomo.Update( 'nozomi', 'hello' );
-    docomo.Talk( cmnt, function(){
+    docomo.update( 'nozomi', 'hello' );
+    docomo.talk( cmnt, function(){
       io.sockets.emit( 'S_to_C_TALK_CB', {value:true} )
     });
   });
@@ -197,8 +191,8 @@ io.sockets.on( 'connection', function( socket ){
     console.log( "[main.js] data.talker = " + data.talker );
     console.log( "[main.js] data.cmnt   = " + data.cmnt );
 
-    docomo.Update( data.talker , 'hello' );
-    docomo.Talk( data.cmnt, function(){
+    docomo.update( data.talker , 'hello' );
+    docomo.talk( data.cmnt, function(){
     });
   });
 

@@ -48,10 +48,10 @@ server.on('S_to_C_CMNT_ONE_DAY', function(data) {
   console.log("[app.js] data = " + JSON.stringify(data.value));
 
   if(data.value == false) {
-    str = "コメントがありません。";
-    document.getElementById("val_data_daily" ).innerHTML = str;
+    str = 'コメントがありません。';
+    document.getElementById('val_data_daily').innerHTML = str;
   } else{
-    showUpdatedCmnt(data.value, "val_data_daily", "up");
+    showUpdatedCmnt(data.value, 'val_data_daily', 'up');
   }
 });
 

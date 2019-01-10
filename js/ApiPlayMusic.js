@@ -109,16 +109,11 @@ class ApiPlayMusic {
 
     let exec = require('child_process').exec;
     let ret  = exec(cmd, function(err, stdout, stderr) {
-  //      console.log("[ApiPlayMusic.js] stdout = " + stdout);
-  //      console.log("[ApiPlayMusic.js] stderr = " + stderr);
         if(err) {
           console.log("[ApiPlayMusic.js] " + err);
         }
 
         let array = stdout.split(/\s+/);
-  //      console.log("[ApiPlayMusic.js] array[0] = \n" + array[0]);
-  //      console.log("[ApiPlayMusic.js] array[1] = \n" + array[1]);
-
         if(callback != undefined) {
           callback(array[1]);
         }

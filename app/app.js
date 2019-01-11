@@ -229,7 +229,7 @@ function submitMicStart() {
   let hi = 'ご用件をどうぞ';
 
   sendTalkData(hi);
-//  recognition.start();
+  recognition.start();
 }
 
 

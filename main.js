@@ -122,7 +122,12 @@ function runMusic(when) {
 
   let job = schedule.scheduleJob(when, function() {
     console.log("[main.js] node-schedule が実行されました");
-    let filename = '../MyContents/Music.mp3';
+
+    let filenames = fs.readdirSync('../MyContents/');
+    console.log("[main.js] filenames = " + filenames);
+    let no = Math.floor(Math.random() * filenames.length);
+
+    let filename = '../MyContents/' + filenames[no];
     g_apiPlayMusic.play(filename, function() {
       g_apiPlayMusic.changeStatus('STOP');
     });
@@ -211,7 +216,11 @@ io.sockets.on('connection', function(socket) {
         console.log("[main.js] " + "pid=" + music_pid);
       });
     } else if(data == 'PLAY') {
-      let filename = '../MyContents/Music.mp3';
+      let filenames = fs.readdirSync('../MyContents/');
+      console.log("[main.js] filenames = " + filenames);
+      let no = Math.floor(Math.random() * filenames.length);
+
+      let filename = '../MyContents/' + filenames[no];
       g_apiPlayMusic.play(filename, function() {
         g_apiPlayMusic.changeStatus('STOP');
       });

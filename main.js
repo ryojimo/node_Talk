@@ -22,7 +22,6 @@ const ApiPlayMusic  = require('./js/ApiPlayMusic');
 let now = new Date();
 console.log("[main.js] " + now.toFormat("YYYY年MM月DD日 HH24時MI分SS秒").rainbow);
 console.log("[main.js] " + "ver.01 : app.js".rainbow);
-console.log("[main.js] " + "access to http://localhost:3001");
 
 // サーバー・オブジェクトを生成
 let server = http.createServer();
@@ -31,7 +30,9 @@ let server = http.createServer();
 server.on('request', doRequest);
 
 // 待ち受けスタート
-server.listen(process.env.VMC_APP_PORT || 3001);
+const PORT = 3001;
+server.listen(process.env.VMC_APP_PORT || PORT);
+console.log("[main.js] access to http://localhost:" + PORT);
 console.log("[main.js] Server running!");
 
 // request イベント処理
@@ -104,6 +105,30 @@ startSystem();
 */
 function startSystem() {
   console.log("[main.js] startSystem()");
+  let job01 = runMusic('45   7     * * *');
+};
+
+
+/**
+ * node-schedule の Job を登録する。
+ * @param {string} when - Job を実行する時間
+ * @return {object} job - node-schedule に登録した job
+ * @example
+ * runMusic( ' 0 0-23/1 * * *');
+*/
+function runMusic(when) {
+  console.log("[main.js] runMusic()");
+  console.log("[main.js] when = " + when);
+
+  let job = schedule.scheduleJob(when, function() {
+    console.log("[main.js] node-schedule が実行されました");
+    let filename = '../MyContents/Music.mp3';
+    g_apiPlayMusic.play(filename, function() {
+      g_apiPlayMusic.changeStatus('STOP');
+    });
+  });
+
+  return job;
 };
 
 
@@ -187,7 +212,9 @@ io.sockets.on('connection', function(socket) {
       });
     } else if(data == 'PLAY') {
       let filename = '../MyContents/Music.mp3';
-      g_apiPlayMusic.play(filename);
+      g_apiPlayMusic.play(filename, function() {
+        g_apiPlayMusic.changeStatus('STOP');
+      });
     } else {
       g_apiPlayMusic.changeStatus(data);
     }

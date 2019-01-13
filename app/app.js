@@ -3,12 +3,12 @@
  * @author       Ryoji Morita
  * @version      0.0.1
 */
-//let sv_ip   = 'sensor.rp.lfx.sony.co.jp';   // node.js server の IP アドレス
-//let sv_ip   = '43.2.100.152';               // node.js server の IP アドレス
-let sv_ip   = '192.168.91.140';                // node.js server の IP アドレス
-let sv_port = 3001;                           // node.js server の port 番号
+//const SV_IP   = 'sensor.rp.lfx.sony.co.jp';   // node.js server の IP アドレス
+//const SV_IP   = '43.2.100.152';               // node.js server の IP アドレス
+const SV_IP   = '192.168.91.11';              // node.js server の IP アドレス
+const SV_PORT = 3001;                         // node.js server の port 番号
 
-let server = io.connect('http://' + sv_ip + ':' + sv_port); //ローカル
+let server = io.connect('http://' + SV_IP + ':' + SV_PORT); //ローカル
 
 
 //-----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ function showUpdatedCmnt(data, id, dir) {
   }
 
   // 文字列を表示
-  document.getElementById(id ).innerHTML = str;
+  document.getElementById(id).innerHTML = str;
 }
 
 
@@ -172,7 +172,7 @@ function clearCmnt() {
 
 
 /**
- * Music コマンド (PLAY, PAUSE, STOP, RESUME ) を送る。
+ * Music コマンド (PLAY, PAUSE, STOP, RESUME) を送る。
  * @param {string} cmd - 'start'/'stop'
  * @return {void}
  * @example

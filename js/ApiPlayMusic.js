@@ -32,11 +32,12 @@ class ApiPlayMusic {
   /**
    * 引数の filename を再生する
    * @param {string} filename - 再生するファイル
+   * @param {function} callback - 再生し終わった後に呼び出すコールバック関数
    * @return {void}
    * @example
    * play("Pink\ -\ Blow\ Me.mp3");
   */
-  play(filename) {
+  play(filename, callback) {
     console.log("[ApiPlayMusic.js] play()");
     console.log("[ApiPlayMusic.js] filename = " + filename);
 
@@ -52,6 +53,13 @@ class ApiPlayMusic {
       this.child.on('exit', function() {
         console.log("[ApiPlayMusic.js] " + "PLAYING" + ": (      ) exit");
   //    process.exit(0);
+      });
+
+      this.child.on('close', function() {
+        console.log("[ApiPlayMusic.js] " + "PLAYING" + ": (      ) close");
+        if(callback != undefined) {
+          callback();
+        }
       });
 
       this.child.stdout.setEncoding('utf-8');
@@ -80,13 +88,16 @@ class ApiPlayMusic {
   changeStatus(status) {
     console.log("[ApiPlayMusic.js] changeStatus()");
     console.log("[ApiPlayMusic.js] status = " + status);
-    this.status = status;
+
+    if(this.status == 'STOP') {
+      status = 'STOP';
+    }
 
     let signal = 'SIGKILL';
     switch(status) {
-    case 'STOP'   : signal = 'SIGKILL'; break;   // this.child プロセスを終了する
-    case 'PAUSE'  : signal = 'SIGSTOP'; break;   // this.child プロセスを一時停止する
-    case 'RESUME' : signal = 'SIGCONT'; break;   // this.child プロセスを再開する
+    case 'STOP'   : this.status = 'STOP';  signal = 'SIGKILL'; break;   // this.child プロセスを終了する
+    case 'PAUSE'  : this.status = 'PAUSE'; signal = 'SIGSTOP'; break;   // this.child プロセスを一時停止する
+    case 'RESUME' : this.status = 'PLAY';  signal = 'SIGCONT'; break;   // this.child プロセスを再開する
     }
 
     if(this.child != null) {
